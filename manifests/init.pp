@@ -1,4 +1,4 @@
-# Class: cescoffier-nexus
+# Class: cescoffier_nexus
 #
 # This module downloads Maven Artifacts from Nexus
 #
@@ -11,13 +11,13 @@
 # Checks and intialized the Nexus support.
 #
 # Sample Usage:
-#  class cescoffier-nexus {
+#  class cescoffier_nexus {
 #   url => http://edge.spree.de/nexus,
 #   username => user,
 #   password => password
 # }
 #
-class cescoffier-nexus(
+class cescoffier_nexus(
 	$url = "",
 	$username = "",
 	$password = "") {
