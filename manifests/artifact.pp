@@ -8,16 +8,15 @@
 # [*classifier*] : The classifier (no classifier by default)
 # [*repository*] : The repository such as 'public', 'central'...(mandatory)
 # [*output*] : The output file (mandatory)
-# [*ensure*] : If 'present' checks the existence of the output file (and downloads it if needed), if 'absent' deletes the output file, if not set redownload the artifact
+# [*ensure*] : If 'absent' deletes the output file, otherwise ensure latest version of the artifact based on modified time.
 # [*timeout*] : Optional timeout for download exec. 0 disables - see exec for default.
 # [*owner*] : Optional user to own the file
 # [*group*] : Optional group to own the file
 # [*mode*] : Optional mode for file
 #
 # Actions:
-# If ensure is set to 'present' the resource checks the existence of the file and download the artifact if needed.
-# If ensure is set to 'absent' the resource deleted the output file.
-# If ensure is not set or set to 'update', the artifact is re-downloaded.
+# If ensure is set to 'absent' we delete the output file.
+# If ensure is not set or set to anything other than 'absent', the artifact is re-downloaded if the remote file is newer or the local file does not yet exist.
 #
 # Sample Usage:
 #  class cescoffier_nexus {
@@ -32,7 +31,7 @@ define cescoffier_nexus::artifact(
 	$classifier = "",
 	$repository,
 	$output,
-	$ensure = update,
+	$ensure = undef,
 	$timeout = undef,
 	$owner = undef,
 	$group = undef,
@@ -53,29 +52,21 @@ define cescoffier_nexus::artifact(
 
 	$cmd = "/opt/nexus-script/download-artifact-from-nexus.sh -a ${gav} -e ${packaging} ${$includeClass} -n ${cescoffier_nexus::NEXUS_URL} -r ${repository} -o ${output} $args -v"
 
-	if (($ensure != absent) and ($gav =~ /-SNAPSHOT/)) {
+	if $ensure != absent {
 		exec { "Checking ${gav}-${classifier}":
 			command => "${cmd} -z",
 			timeout => $timeout,
 			before => Exec["Download ${gav}-${classifier}"] 
 		}
-	}  
-
-	if $ensure == present {
 		exec { "Download ${gav}-${classifier}":
 			command => $cmd,
 			creates  => "${output}",
 			timeout => $timeout
 		}
-	} elsif $ensure == absent {
+	} else {
 		file { "Remove ${gav}-${classifier}":
 			path   => $output,
 			ensure => absent
-		}
-	} else {
-		exec { "Download ${gav}-${classifier}":
-			command => $cmd,
-			timeout => $timeout
 		}
 	}
 
