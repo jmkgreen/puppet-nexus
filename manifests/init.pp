@@ -46,7 +46,7 @@ file { "/opt/nexus-script/download-artifact-from-nexus.sh":
 		ensure   => file,
 	    owner    => "root",
 	    mode     => "0755",
-		source   => "puppet:///modules/nexus/download-artifact-from-nexus.sh",
+		source   => "puppet:///modules/$module_name/download-artifact-from-nexus.sh",
 		require  => [File["/opt/nexus-script"]]
 }
 
