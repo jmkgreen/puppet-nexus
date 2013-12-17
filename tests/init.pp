@@ -1,1 +1,1 @@
-include nexus
+include cescoffier-nexus
