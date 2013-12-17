@@ -1,4 +1,4 @@
-# Resource: nexus::artifact
+# Resource: cescoffier-nexus::artifact
 #
 # This resource downloads Maven Artifacts from Nexus
 #
@@ -20,13 +20,13 @@
 # If ensure is not set or set to 'update', the artifact is re-downloaded.
 #
 # Sample Usage:
-#  class nexus {
+#  class cescoffier-nexus {
 #   url => http://edge.spree.de/nexus,
 #   username => user,
 #   password => password
 # }
 #
-define nexus::artifact(
+define cescoffier-nexus::artifact(
 	$gav,
 	$packaging = "jar",
 	$classifier = "",
@@ -39,10 +39,10 @@ define nexus::artifact(
 	$mode = undef
 	) {
 	
-	include nexus
+	include cescoffier-nexus
 	
-	if ($nexus::authentication) {
-		$args = "-u ${nexus::user} -p '${nexus::pwd}'"
+	if ($cescoffier-nexus::authentication) {
+		$args = "-u ${cescoffier-nexus::user} -p '${cescoffier-nexus::pwd}'"
 	} else {
 		$args = ""
 	}
@@ -51,7 +51,7 @@ define nexus::artifact(
 		$includeClass = "-c ${classifier}"	
 	}
 
-	$cmd = "/opt/nexus-script/download-artifact-from-nexus.sh -a ${gav} -e ${packaging} ${$includeClass} -n ${nexus::NEXUS_URL} -r ${repository} -o ${output} $args -v"
+	$cmd = "/opt/nexus-script/download-artifact-from-nexus.sh -a ${gav} -e ${packaging} ${$includeClass} -n ${cescoffier-nexus::NEXUS_URL} -r ${repository} -o ${output} $args -v"
 
 	if (($ensure != absent) and ($gav =~ /-SNAPSHOT/)) {
 		exec { "Checking ${gav}-${classifier}":
